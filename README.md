@@ -1,5 +1,6 @@
 # crypto_rebal
-Automated cryptocurrency investment portfolio rebalancing tool
+
+**Automated cryptocurrency investment portfolio rebalancing tool**
 
 This is a code that can help you automate portfolio rebalancing.
 
