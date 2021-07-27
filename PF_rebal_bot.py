@@ -26,8 +26,8 @@ def direct_message(msg):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('available commands are: \on (threshold), \pf, \setting_check'
-                              '\setting_w(SYMBOL WEIGHTS), setting_b(SYMBOL PRECISION)')
+    update.message.reply_text('available commands are: /on (threshold)\n/pf\n/setting_check'
+                              '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
 
 def startCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm ready to roll!")
@@ -89,7 +89,7 @@ def set_precision(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text='Setting Done')
     except:
         response = '⚠️ Please check your input format - PAIR Base_Preicision (MUST HAVE SPACES IN BETWEEN)' \
-                   '\neg)BTC 6 ETH 5 SOL 3 RUNE 3}'
+                   '\neg)BTC 6 ETH 5 SOL 3 RUNE 3'
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def check_settings(update, context):
