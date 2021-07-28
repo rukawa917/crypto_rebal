@@ -26,7 +26,7 @@ def direct_message(msg):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('available commands are: \n/on (threshold)\n/pf\n/setting_check'
+update.message.reply_text('available commands are: \n/on (threshold)\n/off\n/pf\n/setting_check'
                               '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
 
 def startCommand(update, context):
