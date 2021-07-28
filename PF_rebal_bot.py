@@ -107,7 +107,7 @@ def PF_rebalancer(update, context, updater=Updater(token=TOKEN)):
     if len(context.args) > 0:
         threshold = context.args[0]
 
-        context.job_queue.run_repeating(monitorCallback, interval=10, first=15,
+        context.job_queue.run_repeating(monitorCallback, interval=3600, first=15,
                                         context=[threshold, update.message.chat_id], name='my_job')
         response = f"⏳ Portfolio Rebalancer ON\nCondition: weight difference > {threshold})!"
 
