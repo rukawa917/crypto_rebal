@@ -26,11 +26,21 @@ def direct_message(msg):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('available commands are: /on (threshold)\n/pf\n/setting_check'
-                              '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
+    update.message.reply_text('available commands are: \on (threshold), \pf, \setting_check'
+                              '\setting_w(SYMBOL WEIGHTS), setting_b(SYMBOL PRECISION)')
 
 def startCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm ready to roll!")
+
+'''
+def rebalance(update, context):
+    update.message.reply_text('Rebalancing in progress\nThis process usually takes 1 minute')
+    df = bn.view_portfolio('pf', 'now')
+    bn.rebalance(df)
+    # direct_message("wait 30 seconds")
+    time.sleep(30)
+    # direct_message("Please check your portfolio again")
+'''
 
 def pf(update, context):
     try:
@@ -89,7 +99,7 @@ def set_precision(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text='Setting Done')
     except:
         response = '⚠️ Please check your input format - PAIR Base_Preicision (MUST HAVE SPACES IN BETWEEN)' \
-                   '\neg)BTC 6 ETH 5 SOL 3 RUNE 3'
+                   '\neg)BTC 6 ETH 5 SOL 3 RUNE 3}'
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def check_settings(update, context):
@@ -103,30 +113,34 @@ def check_settings(update, context):
     weights_response = f'your setting for precision is:\n{weights_dict}'
     context.bot.send_message(chat_id=update.effective_chat.id, text=weights_response)
 
-def PF_rebalancer(update, context):
+def PF_rebalancer(update, context, updater=Updater(token=TOKEN)):
     if len(context.args) > 0:
         threshold = context.args[0]
 
-        context.job_queue.run_repeating(monitorCallback, interval=3600, first=15,
-                                        context=[threshold, update.message.chat_id])
+        context.job_queue.run_repeating(monitorCallback, interval=10, first=15,
+                                        context=[threshold, update.message.chat_id], name='my_job')
         response = f"⏳ Portfolio Rebalancer ON\nCondition: weight difference > {threshold})!"
+
     else:
         response = '⚠️ Error occured'
 
     context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
+def stop_job(update, context):
+    job = context.job_queue.get_jobs_by_name("my_job")
+    job[0].schedule_removal()
+
 def monitorCallback(context):
     threshold = context.job.context[0]
-    threshold = float(threshold)
     chat_id = context.job.context[1]
 
     result = bn.view_portfolio('pf', 'now')
     for x in result.index:
-        if abs(result.at[x, 'weight_diff']) > threshold:
+        if abs(result.at[x, 'weight_diff']) > float(threshold):
             bn.rebalance(result)
 
             response = 'Rebalanced!! Check you Portfolio again!'
-            # context.job.schedule_removal() #  if commented, eternal loop
+            # context.job.schedule_removal() # if commented, eternal loop
             context.bot.send_message(chat_id=chat_id, text=response)
             break
         else:
@@ -139,12 +153,14 @@ def main():
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("help", help))
-    dispatcher.add_handler(CommandHandler('start', startCommand))  # Accessed via /start
-    dispatcher.add_handler(CommandHandler('on', PF_rebalancer))  # Accessed via /alert
+    dispatcher.add_handler(CommandHandler('start', startCommand))
+    dispatcher.add_handler(CommandHandler('on', PF_rebalancer))
+    dispatcher.add_handler(CommandHandler('off', stop_job))
     dispatcher.add_handler(CommandHandler("pf", pf))
     dispatcher.add_handler(CommandHandler("setting_check", check_settings))
     dispatcher.add_handler(CommandHandler("setting_w", set_weights))
     dispatcher.add_handler(CommandHandler("setting_b", set_precision))
+
 
     updater.start_polling()  # Start the bot
     updater.idle()  # Wait for the script to be stopped, this will stop the bot as well
