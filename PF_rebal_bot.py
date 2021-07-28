@@ -32,16 +32,6 @@ def help(update, context):
 def startCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm ready to roll!")
 
-'''
-def rebalance(update, context):
-    update.message.reply_text('Rebalancing in progress\nThis process usually takes 1 minute')
-    df = bn.view_portfolio('pf', 'now')
-    bn.rebalance(df)
-    # direct_message("wait 30 seconds")
-    time.sleep(30)
-    # direct_message("Please check your portfolio again")
-'''
-
 def pf(update, context):
     try:
         direct_message("wait a minute")
