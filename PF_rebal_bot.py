@@ -26,8 +26,8 @@ def direct_message(msg):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('available commands are: \on (threshold), \pf, \setting_check'
-                              '\setting_w(SYMBOL WEIGHTS), setting_b(SYMBOL PRECISION)')
+    update.message.reply_text('available commands are: \n/on (threshold)\n/pf\n/setting_check'
+                              '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
 
 def startCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm ready to roll!")
