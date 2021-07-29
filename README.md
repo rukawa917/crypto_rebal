@@ -2,10 +2,13 @@
 
 **Automated cryptocurrency investment portfolio rebalancing tool**
 
-This is a code that can help you automate portfolio rebalancing.
+The weight of each assets are decided based on personal research and intuition.
 
-The weight of each assets are decided arbitrarly, based on personal research and intuition.
+The is not an official product or service, so use with caution.
 
-This code is my personal project, so should be used with caution.
-
-Enjoy
+Required packages:
+- pandas
+- python-binance
+- python-telegram-bot
+- dataframe-image
+- lxml
