@@ -3,7 +3,7 @@ import telegram
 from telegram import ParseMode
 from telegram.ext import CommandHandler, Defaults, Updater
 import logging
-import Bn_portfolio_rebalancer as bn
+import Binance_PF_Module as bn
 import time
 import json
 import dataframe_image as dfi
