@@ -16,28 +16,31 @@ def set_weights(symbols, weights):
     with open('weights.json', 'w') as fp:
         json.dump(weight_dict, fp)
 
-def view_portfolio():
+def view_portfolio(whichpf, when):
 
-    # get spot wallet balance
+    # get spot wallet
     bal = bn.get_spotWallet_bal()
-    overview = pd.DataFrame.from_dict(bal, orient='index')
+    wal1 = pd.DataFrame.from_dict(bal, orient='index')
+
+    # get savings
+    savings = bn.get_savings()
+    wal2 = pd.DataFrame.from_dict(savings, orient='index')
+
+    # combine savings and spot wallet
+    wal1 = wal1.append(wal2)
+    overview = wal1
     overview.columns = ['balance']
 
     # calculate overall assets
     market = 'spot'
-    timeframe = '1m'
+    if when == 'now':
+        timeframe = '1m'
+    elif when == '-1hr':
+        timeframe = '1h'
 
     lim = 10
-    ignore_list = ['TFUEL', 'BNB', 'SUB', 'BTT', 'BETH', 'BCHSV']
-    # some assets that I have but got de-listed or the value is too small
     for i in overview.index:
         balance = overview.at[i, 'balance']
-        if i in ignore_list:
-            overview.at[i, 'usdt_value'] = 0
-            overview.at[i, 'btc_value'] = 0
-            overview.at[i, 'usdt_price'] = 0
-            continue
-
         if i == 'USDT':
             btcohlcv = bn.get_ohlcv(market, f'BTCUSDT', timeframe, lim)
             btcprice = btcohlcv.at[len(btcohlcv) - 2, 'close']
@@ -53,6 +56,7 @@ def view_portfolio():
                 overview.at[i, 'btc_value'] = balance
                 overview.at[i, 'usdt_value'] = balance * float(usdtprice)
                 overview.at[i, 'usdt_price'] = float(usdtprice)
+
             else:
                 btcohlcv = bn.get_ohlcv(market, f'{i}BTC', timeframe, lim)
                 btcprice = btcohlcv.at[len(btcohlcv) - 2, 'close']
@@ -66,6 +70,15 @@ def view_portfolio():
     all_overview = all_overview.reset_index()
     overview = overview.reset_index()
 
+    # combine savings and spot wallet
+    for x in overview.index:
+        tmp = overview[x+1:]
+        for y in tmp.index:
+            if x == y:
+                overview.at[x, 'balance'] += tmp.at[y, 'balance']
+                overview = overview.drop(index=y)
+
+
     # get rid of assets with tiny balances
     for x in overview.index:
         if overview.at[x, 'usdt_value'] < 1:
@@ -73,17 +86,18 @@ def view_portfolio():
 
     # get weighting of each asset
     total = overview['usdt_value'].sum()
+
     for x in overview.index:
         overview.at[x, 'current_weight'] = overview.at[x, 'usdt_value'] / total * 100
 
-    # target weight
     with open('weights.json', 'r') as fp:
         target = json.load(fp)
     target_weight_df = pd.DataFrame.from_dict(target, columns=['target_weight'], orient='index')
     target_weight_df = target_weight_df.reset_index()
     overview = overview.merge(target_weight_df, on='index')
+    overview = overview.fillna(0) # when there is enough balance this should be removed
 
-    # rename index column to coin
+    # rename columns to coin
     overview = overview.rename(columns={'index': 'coin'})
 
     # target usdt value
@@ -102,15 +116,28 @@ def view_portfolio():
     # Final df processing
     overview = overview.sort_values(by='coin')
     overview = overview.reset_index(drop=True)
-
+    final_overview = overview.rename(columns={'current_weight': 'cur_weight', 'target_usdt_value': 'target_usdt'})
+    final_overview = final_overview.loc[:, ['coin', 'balance', 'usdt_value', 'usdt_price', 'cur_weight', 'target_weight', 'target_usdt', 'weight_diff', 'action_usdt', 'action_coin']]
+    all_overview = all_overview.rename(columns={'index':'coin'})
+    all_overview = all_overview.sort_values(by='coin')
+    all_overview = all_overview.reset_index(drop=True)
 
     # summary
     summary = {}
     summary['total_value_USD'] = overview['usdt_value'].sum()
     summary['total_value_BTC'] = overview['btc_value'].sum()
 
-    print(f'Portfolio summary:\n{summary}\n')
-    return overview
+    # all summary
+    all_summary = {}
+    all_summary['total_value_USD'] = all_overview['usdt_value'].sum()
+
+    if whichpf == 'pf':
+        print(f'Portfolio summary:\n{summary}\n')
+        return final_overview
+
+    elif whichpf == 'totalpf':
+        print(f'Total asset summary:\n{all_summary}\n')
+        return all_overview
 
 def rebalance(df):
     # Rebalancing Execution
