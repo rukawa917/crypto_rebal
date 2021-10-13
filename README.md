@@ -13,8 +13,8 @@ Required packages:
 - dataframe-image
 - lxml
 
-#Logs
+# Logs
 2021-10-13: 
 - added automatic subscription and redemption of fleixble savings
 during rebalancing.
-- Deleted ignore_lst variable and 
+- Deleted ignore_lst variable by only retreiving only active pairs in get_spotWallet() in Binance_API_Module
