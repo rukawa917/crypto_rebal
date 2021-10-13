@@ -12,3 +12,9 @@ Required packages:
 - python-telegram-bot
 - dataframe-image
 - lxml
+
+#Logs
+2021-10-13: 
+- added automatic subscription and redemption of fleixble savings
+during rebalancing.
+- Deleted ignore_lst variable and 
