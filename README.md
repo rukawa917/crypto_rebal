@@ -17,4 +17,4 @@ Required packages:
 2021-10-13: 
 - added automatic subscription and redemption of fleixble savings
 during rebalancing.
-- Deleted ignore_lst variable by only retreiving only active pairs in get_spotWallet() in Binance_API_Module
+- Deleted ignore_lst variable by retreiving only active pairs in get_spotWallet() in Binance_API_Module
