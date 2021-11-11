@@ -14,6 +14,12 @@ Required packages:
 - lxml
 
 # Logs
+2021-11-11:
+- changes in view_portfolio() func
+  - deleted parameters
+  - originally, only preset assets were visible. Now you can see all the assets.
+- Change applied to telegram bot module
+
 2021-10-13: 
 - added automatic subscription and redemption of fleixble savings
 during rebalancing.
