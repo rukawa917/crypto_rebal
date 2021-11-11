@@ -26,7 +26,7 @@ def direct_message(msg):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-update.message.reply_text('available commands are: \n/on (threshold)\n/off\n/pf\n/setting_check'
+    update.message.reply_text('available commands are: \n/on (threshold)\n/off\n/pf\n/setting_check'
                               '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
 
 def startCommand(update, context):
@@ -35,7 +35,7 @@ def startCommand(update, context):
 def pf(update, context):
     try:
         direct_message("wait a minute")
-        df = bn.view_portfolio('pf', 'now')
+        df = bn.view_portfolio()
         df = df.sort_values(by='target_weight', ascending=False)
         df = df.reset_index(drop=True)
 
@@ -124,7 +124,7 @@ def monitorCallback(context):
     threshold = context.job.context[0]
     chat_id = context.job.context[1]
 
-    result = bn.view_portfolio('pf', 'now')
+    result = bn.view_portfolio()
     for x in result.index:
         if abs(result.at[x, 'weight_diff']) > float(threshold):
             bn.rebalance(result)
