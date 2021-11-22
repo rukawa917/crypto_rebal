@@ -14,6 +14,9 @@ Required packages:
 - lxml
 
 # Logs
+2021-11-23:
+- Spotted a bug that doesn't combine the assets in the flexible savings and spot wallet.
+- Will be fixed asap.
 2021-11-11:
 - changes in view_portfolio() func
   - deleted parameters
