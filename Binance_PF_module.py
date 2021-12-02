@@ -74,11 +74,11 @@ def view_portfolio():
     # print(overview)
 
     # get rid of assets with tiny balances and lockedup ETH
+    with open('asset.json', 'r') as fp:
+        assets_dict = json.load(fp)
     for x in overview.index:
-        if overview.at[x, 'usdt_value'] < 1:
+        if overview.at[x, 'usdt_value'] < 1 and overview.at[x, 'coin'] not in assets_dict['assets']:
             overview = overview.drop(index=x)
-        #elif overview.at[x, 'index'] == 'BETH':
-        #    overview = overview.drop(index=x)
 
     # get weighting of each asset
     total = overview['usdt_value'].sum()
