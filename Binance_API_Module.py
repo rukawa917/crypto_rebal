@@ -105,18 +105,6 @@ def get_ticker(market):
 
 def get_savings():
     base = "https://api.binance.com"
-    '''
-    path1 = f'{base}/sapi/v1/lending/daily/product/list'
-    st = check_spotserver_time()
-    params = {"status": "ALL",
-              "size": 100,
-              "timestamp": st}
-    products = bn.get(path1, params)
-    products = products.json()
-    alst = []
-    for x in products:
-        alst.append(x['asset'])
-    '''
     path2 = f'{base}/sapi/v1/lending/daily/token/position'
     st = check_spotserver_time()
     with open('asset.json', 'r') as fp:

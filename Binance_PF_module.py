@@ -37,13 +37,7 @@ def view_portfolio():
     overview = overview.rename(columns={'index': 'coin'})
 
     # combine savings and spot wallet
-    for x in overview.index:
-        tmp = overview[x + 1:]
-        for y in tmp.index:
-            if x == y:
-                overview.at[x, 'balance'] += tmp.at[y, 'balance']
-                overview = overview.drop(index=y)
-    # print(overview)
+    overview = overview.groupby(['coin'], as_index=False).sum()
 
     # calculate overall assets
     market = 'spot'

@@ -92,6 +92,19 @@ def set_precision(update, context):
                    '\neg)BTC 6 ETH 5 SOL 3 RUNE 3}'
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
+def set_assets(update, context):
+    try:
+        input = context.args
+        arr = [i for i in input]
+        asset_dict = {"assets": arr}
+
+        with open('asset.json', 'w') as fp:
+            json.dump(asset_dict, fp)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f'your asset setting:\n{asset_dict}')
+    except:
+        response = '⚠️ Error occured! Please check log'
+        context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
 def check_settings(update, context):
     with open('base.json', 'r') as fp:
         base_dict = json.load(fp)
@@ -102,6 +115,11 @@ def check_settings(update, context):
         weights_dict = json.load(fp)
     weights_response = f'your setting for precision is:\n{weights_dict}'
     context.bot.send_message(chat_id=update.effective_chat.id, text=weights_response)
+
+    with open('asset.json', 'r') as fp:
+        asset_dict = json.load(fp)
+    asset_response = f'your set assets are:\n{asset_dict}'
+    context.bot.send_message(chat_id=update.effective_chat.id, text=asset_response)
 
 def PF_rebalancer(update, context, updater=Updater(token=TOKEN)):
     if len(context.args) > 0:
