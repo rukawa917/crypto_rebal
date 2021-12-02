@@ -39,6 +39,12 @@ def view_portfolio():
     # combine savings and spot wallet
     overview = overview.groupby(['coin'], as_index=False).sum()
 
+    # append the coin that you don't have but included in the assets you set
+    with open('asset.json', 'r') as fp:
+        assets_dict = json.load(fp)
+    for coin in assets_dict['assets']:
+        if coin not in list(overview['coin']):
+            overview = overview.append({'coin': coin}, ignore_index=True)
     # calculate overall assets
     market = 'spot'
     timeframe = '1m'
@@ -74,8 +80,6 @@ def view_portfolio():
     # print(overview)
 
     # get rid of assets with tiny balances and lockedup ETH
-    with open('asset.json', 'r') as fp:
-        assets_dict = json.load(fp)
     for x in overview.index:
         if overview.at[x, 'usdt_value'] < 1 and overview.at[x, 'coin'] not in assets_dict['assets']:
             overview = overview.drop(index=x)
@@ -151,7 +155,6 @@ def view_portfolio():
     #     #print(f'Total asset overview:\n{all_overview}')
     #     print(f'Total asset summary:\n{all_summary}\n')
     #     return all_overview
-
 
 def rebalance(df):
     # Rebalancing Execution
