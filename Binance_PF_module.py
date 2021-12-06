@@ -45,6 +45,7 @@ def view_portfolio():
     for coin in assets_dict['assets']:
         if coin not in list(overview['coin']):
             overview = overview.append({'coin': coin}, ignore_index=True)
+    overview = overview.fillna(0)
     # calculate overall assets
     market = 'spot'
     timeframe = '1m'
@@ -191,3 +192,29 @@ def rebalance(df):
             else:
                 is_rebalanced = False
     return is_rebalanced
+
+def rebal_sell_savings(): #  portfolio df
+    base = "https://api.binance.com"  # spot
+    i = bn.get_savings()
+    for x in i.keys():
+        coin = x
+        amt = i[x]
+        try:
+            bn.redeem_savings(base, coin, amt)
+        except:
+            continue
+
+def rebal_purchase_savings():
+    base = "https://api.binance.com"  # spot
+    bal = bn.get_spotWallet_bal()
+    wal1 = pd.DataFrame.from_dict(bal, orient='index')
+    wal1 = wal1.reset_index()
+    wal1 = wal1.rename(columns={'index': 'coin'})
+
+    for x in wal1.index:
+        coin = wal1.at[x, 'coin']
+        amt = wal1.at[x, 0]
+        try:
+            bn.put_savings(base, coin, amt)
+        except:
+            continue

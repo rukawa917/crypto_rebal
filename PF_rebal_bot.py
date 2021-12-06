@@ -20,6 +20,7 @@ global TOKEN, ID
 TOKEN = 'TOKEN ID'
 ID = 'CHAT ID (GROUP or personal chat)'
 
+
 def direct_message(msg):
     bot = telegram.Bot(token=TOKEN)
     bot.sendMessage(chat_id=ID, text=msg)
@@ -27,10 +28,11 @@ def direct_message(msg):
 def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text('available commands are: \n/on (threshold)\n/off\n/pf\n/setting_check'
-                              '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)')
+                              '\n/setting_w(SYMBOL WEIGHTS)\n/setting_b(SYMBOL PRECISION)\n/setting_a(ASSET)')
 
 def startCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="I'm ready to roll!")
+
 
 def pf(update, context):
     try:
@@ -113,7 +115,7 @@ def check_settings(update, context):
 
     with open('weights.json', 'r') as fp:
         weights_dict = json.load(fp)
-    weights_response = f'your setting for precision is:\n{weights_dict}'
+    weights_response = f'your setting for weights is:\n{weights_dict}'
     context.bot.send_message(chat_id=update.effective_chat.id, text=weights_response)
 
     with open('asset.json', 'r') as fp:
@@ -121,11 +123,12 @@ def check_settings(update, context):
     asset_response = f'your set assets are:\n{asset_dict}'
     context.bot.send_message(chat_id=update.effective_chat.id, text=asset_response)
 
+
 def PF_rebalancer(update, context, updater=Updater(token=TOKEN)):
     if len(context.args) > 0:
         threshold = context.args[0]
 
-        context.job_queue.run_repeating(monitorCallback, interval=3600, first=15,
+        context.job_queue.run_repeating(monitorCallback, interval=900, first=15,
                                         context=[threshold, update.message.chat_id], name='my_job')
         response = f"⏳ Portfolio Rebalancer ON\nCondition: weight difference > {threshold})!"
 
@@ -145,8 +148,9 @@ def monitorCallback(context):
     result = bn.view_portfolio()
     for x in result.index:
         if abs(result.at[x, 'weight_diff']) > float(threshold):
+            bn.rebal_sell_savings()
             bn.rebalance(result)
-
+            bn.rebal_purchase_savings()
             response = 'Rebalanced!! Check you Portfolio again!'
             # context.job.schedule_removal() # if commented, eternal loop
             context.bot.send_message(chat_id=chat_id, text=response)
@@ -168,7 +172,7 @@ def main():
     dispatcher.add_handler(CommandHandler("setting_check", check_settings))
     dispatcher.add_handler(CommandHandler("setting_w", set_weights))
     dispatcher.add_handler(CommandHandler("setting_b", set_precision))
-
+    dispatcher.add_handler(CommandHandler("setting_a", set_assets))
 
     updater.start_polling()  # Start the bot
     updater.idle()  # Wait for the script to be stopped, this will stop the bot as well
