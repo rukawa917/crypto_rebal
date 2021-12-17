@@ -2,6 +2,8 @@
 
 **Automated cryptocurrency investment portfolio rebalancing tool**
 
+Medium Link: https://medium.com/@rukawa917
+
 The weight of each assets are decided based on personal research and intuition.
 
 The is not an official product or service, so use with caution.
