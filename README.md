@@ -6,9 +6,7 @@
 Medium Link: https://medium.com/@rukawa917 (Private)
 * this series of articles have gone private as I have created an online course at HKML.
 
-checkout HKML edutech regarding how to create such bot step by step.
-
-
+checkout HKML edutech regarding how to create such bot step by step. (https://www.hkml-edutech.com/) 
 
 The weight of each assets are decided based on personal research and intuition.
 
