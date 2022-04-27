@@ -2,7 +2,13 @@
 
 **Automated cryptocurrency investment portfolio rebalancing tool**
 
-Medium Link: https://medium.com/@rukawa917
+
+Medium Link: https://medium.com/@rukawa917 (Private)
+* this series of articles have gone private as I have created an online course at HKML.
+
+checkout HKML edutech regarding how to create such bot step by step.
+
+
 
 The weight of each assets are decided based on personal research and intuition.
 
